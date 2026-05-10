@@ -1,0 +1,463 @@
+/* ============================================
+   CSS PLAYING CARDS — styles.css
+   প্রতিটা section এ comment দিয়ে বুঝিয়ে দেওয়া হয়েছে
+   ============================================ */
+
+/* ── 1. CSS CUSTOM PROPERTIES (Variables) ──
+   এক জায়গায় color define করলে সারা project এ
+   easily change করা যায় */
+:root {
+  --red: #c0392b;
+  --black: #1a1a2e;
+  --card-bg: #ffffff;
+  --page-bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --surface-2: #252540;
+  --accent: #e8c87a;
+  --text-main: #f0f0f0;
+  --text-muted: #8888aa;
+  --radius: 14px;
+  --shadow-sm: 2px 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-md: 4px 16px 36px rgba(0, 0, 0, 0.55);
+  font-size: 16px;
+}
+
+/* ── 2. RESET & BASE ──
+   browser default margin/padding বাদ দেওয়া */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Georgia", serif;
+  background-color: var(--page-bg);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* ── 3. HEADER ── */
+.site-header {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.site-header h1 {
+  font-size: clamp(1.8rem, 5vw, 3rem); /* responsive font size */
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text-main);
+}
+
+/* clamp(min, preferred, max) — screen ছোট হলে
+   font automatically ছোট হয় */
+
+.accent {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.subtitle {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-family: "Courier New", monospace;
+}
+
+/* ── 4. CONTROLS SECTION ── */
+.controls-section {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+/* CSS GRID — flexible columns */
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.ctrl-box {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.ctrl-box label {
+  display: block;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.ctrl-box .hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+}
+
+/* Slider row — flex দিয়ে range ও output পাশাপাশি */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* input[type=range] custom styling */
+input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%; /* perfect circle */
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.3); /* hover এ বড় হয় */
+}
+
+output {
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  color: var(--text-main);
+  min-width: 42px;
+  text-align: right;
+}
+
+select {
+  width: 100%;
+  background: var(--surface-2);
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  font-family: "Courier New", monospace;
+  cursor: pointer;
+  outline: none;
+}
+
+select:hover {
+  border-color: var(--accent);
+}
+
+/* ── 5. INFO BAR ── */
+.info-bar {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
+}
+
+.info-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+#info-code {
+  font-family: "Courier New", monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── 6. FLEXBOX — CARDS CONTAINER ──
+   এটাই মূল layout, সব card কে সাজায় */
+#playing-cards {
+  display: flex; /* flexbox চালু */
+  justify-content: center; /* horizontal center */
+  flex-wrap: wrap; /* একাধিক লাইনে যেতে পারে */
+  gap: 24px; /* card এর মাঝে ফাঁকা */
+  padding: 2.5rem 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ── 7. CARD BASE STYLE ── */
+.card {
+  /* SIZE */
+  width: 120px;
+  height: 174px; /* roughly 1.45 aspect ratio */
+
+  /* LAYOUT — ভেতরের elements সাজাতে */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  /* APPEARANCE */
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  /* SHADOW — depth দেয় */
+  box-shadow: var(--shadow-sm);
+
+  /* POSITIONING — corner badge এর জন্য */
+  position: relative; /* child এর position: absolute এর reference */
+  overflow: hidden; /* shine effect clip করতে */
+
+  /* INTERACTION */
+  cursor: pointer;
+  outline: none;
+
+  /* TRANSITION — smooth animation */
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* ── 8. CARD HOVER ── default effect */
+.card:hover,
+.card:focus {
+  transform: translateY(-10px) scale(1.04);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── 9. SELECTED STATE ── */
+.card.selected {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* ── 10. CARD COLORS ── */
+.card.red .rank,
+.card.red .suit,
+.card.red .center-suit {
+  color: var(--red);
+}
+
+.card.black .rank,
+.card.black .suit,
+.card.black .center-suit {
+  color: var(--black);
+}
+
+/* ── 11. POSITION: RELATIVE + ABSOLUTE ──
+   corner badge সঠিক জায়গায় রাখতে */
+.corner {
+  position: absolute; /* parent (.card) এর relative */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+  padding: 6px 8px;
+}
+
+.corner.top-left {
+  top: 0;
+  left: 0;
+}
+
+.corner.bottom-right {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg); /* উল্টো করতে */
+}
+
+.rank {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: "Georgia", serif;
+}
+
+.suit {
+  font-size: 0.75rem;
+}
+
+/* ── 12. CENTER SUIT ── */
+.center-suit {
+  font-size: 3rem;
+  text-align: center;
+  line-height: 1;
+  /* flexbox এ নিজে center এ থাকতে */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* perfect center */
+  pointer-events: none;
+}
+
+/* ── 13. SHINE EFFECT (pseudo-element এর বিকল্প) ──
+   একটা extra div দিয়ে hover এ আলোর effect */
+.card-shine {
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 80%;
+  height: 80%;
+  background: rgba(255, 255, 255, 0.12);
+  transform: rotate(30deg);
+  pointer-events: none;
+  transition: opacity 0.3s;
+  opacity: 0;
+  border-radius: 50%;
+}
+
+.card:hover .card-shine {
+  opacity: 1;
+}
+
+/* ── 14. @KEYFRAMES — SHAKE ANIMATION ──
+   CSS only animation, JS লাগে না */
+@keyframes shake {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-10px) rotate(-4deg);
+  }
+  40% {
+    transform: translateY(-10px) rotate(4deg);
+  }
+  60% {
+    transform: translateY(-10px) rotate(-4deg);
+  }
+  80% {
+    transform: translateY(-10px) rotate(4deg);
+  }
+  100% {
+    transform: translateY(-10px) rotate(0deg);
+  }
+}
+
+/* shake class টা JS দিয়ে add করা হয় */
+.card.hover-shake:hover,
+.card.hover-shake:focus {
+  animation: shake 0.4s ease;
+  transform: translateY(-10px);
+}
+
+/* ── 15. HOVER EFFECT VARIANTS ──
+   JS দিয়ে body তে class change করা হয় */
+body.hover-rotate .card:hover,
+body.hover-rotate .card:focus {
+  transform: translateY(-8px) rotate(-6deg) scale(1.05);
+}
+
+body.hover-scale .card:hover,
+body.hover-scale .card:focus {
+  transform: scale(1.12);
+}
+
+body.hover-none .card:hover,
+body.hover-none .card:focus {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── 16. LEGEND SECTION ── */
+.legend {
+  max-width: 900px;
+  margin: 2rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.legend h2 {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.75rem;
+}
+
+.legend-item {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.tag {
+  display: inline-block;
+  font-family: "Courier New", monospace;
+  font-size: 0.75rem;
+  background: rgba(232, 200, 122, 0.12);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-bottom: 0.4rem;
+}
+
+.legend-item p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── 17. MEDIA QUERY ──
+   ছোট screen এ layout adjust */
+@media (max-width: 600px) {
+  .site-header {
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  #playing-cards {
+    gap: 14px;
+    padding: 1.5rem 1rem;
+  }
+
+  .card {
+    width: 90px;
+    height: 130px;
+  }
+
+  .center-suit {
+    font-size: 2.2rem;
+  }
+
+  .rank {
+    font-size: 0.8rem;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    width: 75px;
+    height: 109px;
+  }
+}
